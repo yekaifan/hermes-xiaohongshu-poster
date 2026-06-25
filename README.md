@@ -18,10 +18,10 @@ uv pip install DrissionPage
 
 ### 启动浏览器
 ```bash
-# 账号1（红米K50分身）
+# 账号1（个人种草号）
 "C:/Program Files/Google/Chrome/Application/chrome.exe" \
   --remote-debugging-port=9223 \
-  --user-data-dir="C:/Users/OKykf/AppData/Local/Google/Chrome/User Data/XHS_Account1"
+  --user-data-dir="./chrome_profile_account1"
 ```
 
 打开 `xiaohongshu.com` 扫码登录（仅首次）。
@@ -115,7 +115,7 @@ POI点击率25% → 下单转化60% → 核销率20%续命 → 同城精准度20
 ### 合规红线
 AI标注、禁私域引流、禁虚假人设、禁洗稿
 
-完整知识手册：`C:\Users\OKykf\Desktop\小红书知识库\线下授课\小红书运营知识手册_综合精编版.docx`
+完整知识手册：`{用户目录}/Desktop/小红书知识库/线下授课/小红书运营知识手册_综合精编版.docx`
 
 ## License
 
