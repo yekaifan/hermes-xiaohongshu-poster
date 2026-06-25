@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Assets (generated images)
+assets/*/
+assets/temp_card.*
+!assets/.gitkeep
+
+# Old scripts (keep only latest)
+scripts/gen_big_cards.py
+scripts/gen_v2.py
+scripts/gen_v3.py
+scripts/prepare_and_upload.py
+scripts/publish_xhs.py
+scripts/xhs_poster.py
+
+# OS
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
