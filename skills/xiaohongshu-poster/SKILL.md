@@ -12,7 +12,7 @@ prerequisites:
 # 小红书自动发帖 v3
 
 ## 项目位置
-`D:\Hermes agnet\` (GitHub: yekaifan/hermes-xiaohongshu-poster)
+`D:\Hermes agnet\` (GitHub: `项目名/hermes-xiaohongshu-poster`)
 
 ## 文件结构
 ```
