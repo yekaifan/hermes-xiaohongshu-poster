@@ -20,10 +20,10 @@ SCHEMES = {
 
 def make_card(title, sub, scheme_name, out):
     s = SCHEMES.get(scheme_name, SCHEMES["dark"])
-    sub_lines = sub.split("\\n")
     sub_html = ""
-    for line in sub_lines:
-        sub_html += f'<div style="font-size:36px;font-weight:700;color:{s["lc"]};line-height:1.5;margin-bottom:2px;">{line}</div>'
+    if sub and sub.strip():
+        for line in sub.split("\\n"):
+            sub_html += f'<div style="font-size:36px;font-weight:700;color:{s["lc"]};line-height:1.5;margin-bottom:2px;">{line}</div>'
 
     html = f'''<!DOCTYPE html><html><meta charset="utf-8">
 <body style="margin:0;display:flex;justify-content:center;align-items:center;background:#ccc;overflow:hidden;">
