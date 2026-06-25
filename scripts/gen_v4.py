@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 """
-Xiaohongshu card generator v4
-Reads post config from JSON, generates 4 cards with correct scrollbar/DPI settings.
+Xiaohongshu card generator v4 - Reads post config from JSON.
 Usage: python gen_v4.py --post-name <name>
 """
 
-import os, json, time, random, subprocess, sys
+import os, json, time, random, subprocess, sys, urllib.request
 
 BASE = "D:/Hermes agnet"
 CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe"
 URL = "https://creator.xiaohongshu.com/publish/publish?source=official"
 
-# Card color schemes
 SCHEMES = {
     "dark":   {"bg": "#1a1a2e", "tc": "#ffffff", "lc": "#ffffff", "ac": "#ff6b35"},
     "orange": {"bg": "#bf360c", "tc": "#ffffff", "lc": "#ffffff", "ac": "#ffcc02"},
@@ -22,7 +20,6 @@ SCHEMES = {
 
 def make_card(title, sub, scheme_name, out):
     s = SCHEMES.get(scheme_name, SCHEMES["dark"])
-    # Split subtitle by \n
     sub_lines = sub.split("\\n")
     sub_html = ""
     for line in sub_lines:
@@ -62,19 +59,16 @@ def main():
     with open(config_path, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 
-    # Check Chrome
-    import urllib.request
     try:
         r = urllib.request.urlopen(f"http://localhost:{cfg['port']}/json/version", timeout=3)
         print(f"Chrome OK port {cfg['port']}")
     except:
-        print(f"Chrome on port {cfg['port']} not responding! Start it first.")
+        print(f"Chrome on port {cfg['port']} not responding!")
         sys.exit(1)
 
     out_dir = os.path.join(BASE, "assets", post_name)
     os.makedirs(out_dir, exist_ok=True)
 
-    # 4 cards from config
     cards = [
         {"f": "01_cover.png",    "title": cfg.get("card_cover_title",""), "sub": cfg.get("card_cover_sub",""),  "style": cfg.get("card_cover_style","dark")},
         {"f": "02_why.png",      "title": cfg.get("card2_title",""),      "sub": cfg.get("card2_sub",""),       "style": cfg.get("card2_style","dark")},
@@ -92,28 +86,16 @@ def main():
             print(f"✅ {sz}KB")
             images.append(p)
         else:
-            print("❌")
-            return
+            print("❌"); return
 
     print(f"\n✅ {len(images)} cards")
-
-    # Upload
     print("Uploading to draft...")
+
     from DrissionPage import ChromiumPage
     p = ChromiumPage(addr_or_opts=cfg['port'])
     p.get(URL)
     time.sleep(random.uniform(3,5))
-
-    p.run_js('''
-    var a=document.querySelectorAll("span,div");
-    for(var i=0;i<a.length;i++){
-        var t=a[i].textContent.trim();
-        if(t==="\\u4e0a\\u4f20\\u56fe\\u6587"&&a[i].offsetHeight>0){
-            var e=a[i];
-            for(var j=0;j<5;j++){if(e.tagName==="DIV"){e.click();return;}if(e.parentElement)e=e.parentElement;}
-        }
-    }
-    ''')
+    p.run_js('var a=document.querySelectorAll("span,div");for(var i=0;i<a.length;i++){var t=a[i].textContent.trim();if(t==="\\u4e0a\\u4f20\\u56fe\\u6587"&&a[i].offsetHeight>0){var e=a[i];for(var j=0;j<5;j++){if(e.tagName==="DIV"){e.click();return;}if(e.parentElement)e=e.parentElement;}}}')
     time.sleep(random.uniform(3,5))
 
     for img in images:
@@ -123,36 +105,13 @@ def main():
             time.sleep(random.uniform(3,6))
 
     time.sleep(random.uniform(3,5))
-
     title = cfg["title"][:20]
-    p.run_js('''
-    var ins=document.querySelectorAll("input");
-    for(var i=0;i<ins.length;i++){
-        var ph=ins[i].placeholder||"";
-        if(ph.includes("\\u6807\\u9898")){
-            var s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,"value").set;
-            s.call(ins[i],arguments[0]);
-            ins[i].dispatchEvent(new Event("input",{bubbles:true}));
-        }
-    }
-    ''', title)
+    p.run_js('var ins=document.querySelectorAll("input");for(var i=0;i<ins.length;i++){var ph=ins[i].placeholder||"";if(ph.includes("\\u6807\\u9898")){var s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,"value").set;s.call(ins[i],arguments[0]);ins[i].dispatchEvent(new Event("input",{bubbles:true}));}}', title)
     time.sleep(random.uniform(2,4))
-
-    p.run_js('''
-    var eds=document.querySelectorAll("[contenteditable=true]");
-    for(var i=0;i<eds.length;i++){
-        if(eds[i].offsetHeight>50){
-            eds[i].focus();
-            eds[i].innerText=arguments[0];
-            eds[i].dispatchEvent(new Event("input",{bubbles:true}));
-        }
-    }
-    ''', cfg["body"])
+    p.run_js('var eds=document.querySelectorAll("[contenteditable=true]");for(var i=0;i<eds.length;i++){if(eds[i].offsetHeight>50){eds[i].focus();eds[i].innerText=arguments[0];eds[i].dispatchEvent(new Event("input",{bubbles:true}));}}', cfg["body"])
     time.sleep(2)
-
-    print(f"\n✅ Draft saved! {len(images)}images | title='{title}' | {len(cfg['body'])}chars body")
+    print(f"\n✅ Draft saved! {len(images)}images | title='{title}'")
     print("📌 Open creator → 草稿箱 → 检查 → 发布")
-
 
 if __name__ == "__main__":
     main()
