@@ -92,7 +92,53 @@ python scripts/gen_v4.py --post-name xxx
 - 不在个人号索要微信/电话
 - 发布按钮暂时无法自动点击（React组件限制）
 
-## 核心运营知识
+## 扣子AI文案集成
+
+本工具支持从 **扣子（Coze.cn）龙膜文案大师** 获取文案后自动发帖。
+
+### 完整流程
+
+```
+扣子AI（龙膜文案大师）
+  ↓ 发送"给我4个符合当下最火的龙膜文案"
+  ↓ 等待AI回复4篇完整文案
+DrissionPage 读取扣子对话内容
+  ↓ 提取文案
+创建JSON配置（标题/正文/4张卡片内容）
+  ↓
+gen_v4.py 生成马卡龙风格4张卡片 → 上传小红书草稿箱
+  ↓
+你去 creator.xiaohongshu.com → 草稿箱 → 发布
+```
+
+### 扣子操作步骤
+
+1. **确保扣子已登录**：连接Chrome，访问 `https://www.coze.cn`，扫码登录
+2. **导航到会话**：`https://www.coze.cn/session/7655311884626805001`
+3. **发送消息**：用 `execCommand('insertText', false, '消息内容')` + Enter 键发送（直接改 innerText 无效）
+4. **等待回复**：循环检查页面内容，等待AI完成回复
+5. **提取内容**：从页面文本中提取AI回复的文案
+
+### 提取文案后创建帖子
+
+参考 `posts/window_compliance.json` 格式，注意：
+- `card_*_style` 用 `macaron` 系列配色（粉/蓝/绿/黄/紫/蜜桃）
+- `card_cover_sub` 留空字符串 `""`，封面只显示标题
+- 标签 `#话题` 直接写在 `body` 末尾（当前暂不支持通过UI点击添加）
+
+```json
+{
+  "port": 9223,
+  "title": "亮窗行动最后4天！",
+  "body": "正文内容...\\n\\n#标签1 #标签2",
+  "card_cover_title": "封面标题",
+  "card_cover_sub": "",
+  "card_cover_style": "macaron",
+  "card2_title": "...",
+  "card2_sub": "要点1\\\\n要点2",
+  "card2_style": "macaron-blue"
+}
+```
 
 ### 平台算法五维度
 | 维度 | 权重 | 优化方向 |
